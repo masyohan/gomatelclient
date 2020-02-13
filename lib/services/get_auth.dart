@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GetAuth {
 
   Future<http.Response> signin (User val) async {
-    const url = 'http://newgomatel.com/apiica/auth/sign_user';
+    const url = 'http://go-matel.com/apiica/auth/sign_user';
     val.imei = await ImeiPlugin.getImei;
 //    val.imei = '23432423432431';
 
@@ -23,7 +23,7 @@ class GetAuth {
 
 
   Future<http.Response> signup (Register val) async {
-    const url = 'http://newgomatel.com/apiica/regist/save_user';
+    const url = 'http://go-matel.com/apiica/regist/save_user';
     val.imei = await ImeiPlugin.getImei;
 
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();

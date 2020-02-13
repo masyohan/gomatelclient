@@ -5,7 +5,7 @@ import 'package:flutter_mata_elang/model/profile.dart';
 class GetCsv {
 
   Future<List<Profile>> load () async {
-    const url = 'http://bprags.co.id/kasus.csv';
+    const url = 'http://go-matel.com/databackend/kasus.csv';
 
     Dio _dio = new Dio();
     Response<String> _data = await _dio.get<String>(url);

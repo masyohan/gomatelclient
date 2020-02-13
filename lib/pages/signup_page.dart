@@ -36,6 +36,8 @@ class _SignUpPageState extends State<SignUpPage> {
   String _fotoktp;
   String _fotoselfi;
   String _fcmid = '7817639614932';
+  int _code;
+  bool _open = false;
 
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
@@ -70,6 +72,31 @@ class _SignUpPageState extends State<SignUpPage> {
 //    print(_user.toMap());
     getIt.get<AuthManager>().signup.execute(_user);
   }
+
+  Future<void> _showDialog(String val) async {
+    _open = false;
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('ERROR!',
+                style: Style.subTitle1.copyWith(color: Style.darkindigo)),
+            content:
+                Text(val, style: Style.subTitle1.copyWith(color: Style.oldred)),
+            actions: <Widget>[
+              TextButton(
+                  text: Text('tutup',
+                      style: Style.button.copyWith(color: Style.oldred)),
+                  onPressed: (context) {
+                    Navigator.of(context).pop();
+                    _code = 0;
+                  }),
+            ],
+          );
+        });
+  }
+
 
   Future<void> _showSuccess() async {
     showDialog(
@@ -353,7 +380,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           Navigator.pop(context);
                         } else {
                           WidgetsBinding.instance
-                              .addPostFrameCallback((_) => _showError());
+                              .addPostFrameCallback((_) => _showDialog(snapshot.data.body));
                         }
                       }
                       return PrimaryButton(
