@@ -32,7 +32,7 @@ class LocData {
     DateTime _date = DateTime.now();
     String _now = '${_date.year}-${_date.month}-${_date.day} ${_date.hour}:${_date.minute}:${_date.second}';
 
-    Map<String, dynamic> _map = {'waktu': _now, 'nopol': plate, 'user_id': _rec[0], 'longitude': pos.longitude.toString(), 'latitude': pos.latitude.toString()};
+   /* Map<String, dynamic> _map = {'waktu': _now, 'nopol': plate, 'user_id': _rec[0], 'longitude': pos.longitude.toString(), 'latitude': pos.latitude.toString()};
 
     http.Response response = await http.post(
       url, 
@@ -40,7 +40,7 @@ class LocData {
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer ${_rec[4]}'
       }
-    );
+    );*/
 
 //    print('Response status: ${response.statusCode}');
 //    print('Response body: ${response.body}');

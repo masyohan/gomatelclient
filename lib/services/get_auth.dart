@@ -28,14 +28,14 @@ class GetAuth {
 
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     val.fcmid = await _firebaseMessaging.getToken();
-//    print(val.toMap());
+    print(val.toMap());
 
     SharedPreferences _storage = await SharedPreferences.getInstance();
     _storage.setString('token', val.fcmid);
 
     http.Response response = await http.post(url, body: val.toMap());
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
     return response;
   }
 

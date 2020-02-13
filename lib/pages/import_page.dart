@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mata_elang/pages/search_page.dart';
-
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter_mata_elang/style/style.dart';
 import 'package:flutter_mata_elang/style/icon.dart';
+import 'package:flutter_mata_elang/pages/search_page.dart';
 import 'package:flutter_mata_elang/widgets/buttons/main_button.dart';
 import 'package:flutter_mata_elang/widgets/menus/menu_drawer.dart';
 import 'package:flutter_mata_elang/widgets/keyboard/keyboard.dart';
@@ -12,21 +13,42 @@ import 'package:flutter_mata_elang/pages/bulk_page.dart';
 import 'package:flutter_mata_elang/services/service_locator.dart';
 import 'package:flutter_mata_elang/managers/blk_manager.dart';
 import 'package:flutter_mata_elang/model/profile.dart';
+import 'package:csv/csv.dart';
+import 'package:flutter_mata_elang/managers/blk_manager.dart';
+import 'package:documents_picker/documents_picker.dart';
 
-class BulksPage extends StatefulWidget {
-  BulksPage({Key key}) : super(key: key);
+class ImportPage extends StatefulWidget {
+  ImportPage({Key key}) : super(key: key);
 
   @override
-  _BulksPageState createState() => _BulksPageState();
+  _ImportPageState createState() => _ImportPageState();
 }
 
-class _BulksPageState extends State<BulksPage> {
+class _ImportPageState extends State<ImportPage> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   String _text = '';
-  Future kembali(){
-    Navigator.pushReplacement(context,MaterialPageRoute(
-                              builder: (BuildContext context) => SearchPage()));
+  String _csvpath;
+
+  List<String> _docPaths;
+
+  Future _getCSV() async {
+    //_csvpath = await FilePicker.getFilePath(fileExtension: 'csv');
+    _docPaths = await DocumentsPicker.pickDocuments;
+    final _input = new File(_docPaths[0]).openRead();
+    print(_docPaths[0]);
+    //final _fields = await _input.transform(utf8.decoder).transform(new CsvToListConverter()).toList();
+    //List<Profile> _table = CsvToListConverter(eol: '\n').convert(_input.toString()).map((item) => Profile.fromList(item)).toList();
+    //print(_table[5000].toMap());
+    //List<Profile> _table = _fields.map((item) => Profile.fromList(item)).toList();
+
+    //getIt.get<BlkManager>().insertBulks.execute(_table.toList());
   }
+
+  Future kembali() {
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) => SearchPage()));
+  }
+
   /*onPressed(KeyboardKey key) {
 
     if( key.type == KeyType.text) {
@@ -73,51 +95,12 @@ class _BulksPageState extends State<BulksPage> {
                     height: 48.0,
                   ),
                   MainButton(
-                      icon: Icon(Icons.add),
-                      onPressed: (context) => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) => AddBulkPage(platno: '',)))
+                      icon: Icon(Icons.add), onPressed: (context) => _getCSV()
 //                  onPressed: (context) => scaffoldKey.currentState.openDrawer()
                       ),
                 ],
               ),
-              Container(
-                  height: MediaQuery.of(context).size.height - 75,
-                  child: StreamBuilder<List<dynamic>>(
-                    stream: getIt.get<BlkManager>().searchBulks,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<dynamic>> snapshot) {
-                      if (snapshot.hasData && snapshot.data.length > 0) {
-//                    return Text('ada ${snapshot.data.length}');
-                        return ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            Profile _item =
-                                Profile.fromMap(snapshot.data[index]);
-                            return Column(
-                              children: <Widget>[
-                                BulkList(
-                                    profile: _item,
-                                    onPressed: (context) => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                BulkPage(
-                                                  profile: _item,
-                                                )))),
-                                Divider(
-                                  color: Colors.red,
-                                )
-                              ],
-                            );
-                          },
-                        );
-                      } else {
-                        return Text('kosong');
-                      }
-                    },
-                  )),
+
 /*            Container(
                 color: Style.white,
                 child: SpecialKeyboard(

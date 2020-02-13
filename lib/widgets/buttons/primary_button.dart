@@ -21,19 +21,13 @@ class PrimaryButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: disabled ? Style.palered: Style.oldred,
           shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(4.0),
+          borderRadius: BorderRadius.circular(50),
           gradient: new LinearGradient(
-            colors: disabled ? [Style.lightred, Style.palered] : [Style.mediumred, Style.oldred],
+            colors: disabled ? [Style.lightred, Style.palered] : [Color(0xFFf44336), Color(0xFFd32f2f)],
             begin: Alignment.centerRight,
             end: new Alignment(-1.0, -1.0)
           ),
-          boxShadow: <BoxShadow> [
-            new BoxShadow(
-                color: disabled ? Style.palered: Style.oldred,
-                blurRadius: 03.0,
-                offset: new Offset(0.0, 05.0)
-            )
-          ]
+          
         ),
       ),
     );

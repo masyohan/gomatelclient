@@ -6,23 +6,32 @@ import 'package:flutter_mata_elang/widgets/buttons/main_button.dart';
 import 'package:flutter_mata_elang/widgets/menus/menu_drawer.dart';
 import 'package:flutter_mata_elang/widgets/buttons/secondary_button.dart';
 import 'package:flutter_mata_elang/pages/search_page.dart';
-
-class ServicePage extends StatefulWidget {
-  ServicePage({Key key}) : super(key: key);
+import 'package:flutter_mata_elang/services/service_locator.dart';
+import 'package:flutter_mata_elang/services/data_sql.dart';
+class JumlahDataPage extends StatefulWidget {
+  JumlahDataPage({Key key}) : super(key: key);
 
   @override
-  _ServicePageState createState() => _ServicePageState();
+  _JumlahDataPageState createState() => _JumlahDataPageState();
 }
 
-class _ServicePageState extends State<ServicePage> {
+class _JumlahDataPageState extends State<JumlahDataPage> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  int jumlahData;
+  int totalData;
   Future kembali() {
     Navigator.pushReplacement(context,
         MaterialPageRoute(builder: (BuildContext context) => SearchPage()));
   }
+  void getJumlah() async{
+    jumlahData = await getIt.get<DataSql>().getCount();
+  }
 
   @override
   Widget build(BuildContext context) {
+    getJumlah();
+    setState(() { totalData = jumlahData; });
+    print(totalData);
     return WillPopScope(
       onWillPop: () async => kembali(),
       child: Scaffold(
@@ -50,30 +59,14 @@ class _ServicePageState extends State<ServicePage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                          'Jika anda memiliki pertanyaan, kritik, saran atau ingin melakukan konfirmasi pembayaran silakan hubungi kami:\n\n1. Via SMS/Tlp: 082191443443\n\n2. Via Whatsapp: 082191443443',
-                          style: Style.body2.copyWith(color: Style.slategrey)),
+                      
                       Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                         child: SecondaryButton(
-                            icon: STIcon.whatsApp,
-                            label: '082191443443',
+                            icon: Icon(Icons.data_usage),
+                            label: 'Total Data : ${totalData.toString()}',
                             onPressed: (context) => print('bill')),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: SecondaryButton(
-                            icon: STIcon.mail,
-                            label: 'Via SMS',
-                            onPressed: (context) => print('bill')),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: SecondaryButton(
-                            icon: STIcon.phone,
-                            label: 'Via Telepon',
-                            onPressed: (context) => print('bill')),
-                      ),
+                      )
                     ]),
               ),
             ],

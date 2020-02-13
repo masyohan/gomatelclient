@@ -15,7 +15,7 @@
 class Profile {
   int id;
   final String name;
-  final String plate;
+  final plate;
   final String vehicle;
   final String frame;
   final String engine;
@@ -33,7 +33,7 @@ class Profile {
 
   Profile.fromList(List<dynamic> list)
     : name = list[0],
-      plate = (list[1] == null) ? '' : list[1].replaceAll(' ', ''),
+      plate = list[1],//(list[1] == null) ? '' : list[1].replaceAll(' ', ''),
       vehicle = list[2].toString(),
       frame = (list[3] == null) ? '' : list[3].toString().replaceAll(' ', ''),
       engine = (list[4] == null) ? '' : list[4].toString().replaceAll(' ', ''),

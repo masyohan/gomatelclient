@@ -8,8 +8,9 @@ class KeyButton extends StatelessWidget {
   final Widget child;
   final double width;
   final double height;
-
-  KeyButton({Key key, this.height, this.width, this.child, this.onPressed}) : super(key: key);
+  final Color warna;
+  
+  KeyButton({Key key,this.warna, this.height, this.width, this.child, this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +27,18 @@ class KeyButton extends StatelessWidget {
           alignment: Alignment.center,
           child: child,
           decoration: BoxDecoration(
-            color: Style.lightred,
+            color: warna,
             shape: BoxShape.rectangle,
             border: Border.all(
               width: 1.0,
-              color: Style.oldred
+              color: Colors.grey
             ),
             borderRadius: BorderRadius.all(
               Radius.circular(4.0)
             ),
             boxShadow: <BoxShadow> [
               new BoxShadow(
-                  color: Style.oldred.withOpacity(0.7),
+                  color: Colors.grey.withOpacity(0.7),
                   blurRadius: 05.0,
                   offset: new Offset(0.0, 04.0)
               )

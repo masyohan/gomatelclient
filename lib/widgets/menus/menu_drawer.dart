@@ -7,8 +7,10 @@ import 'package:flutter_mata_elang/pages/data_page.dart';
 import 'package:flutter_mata_elang/pages/note_page.dart';
 import 'package:flutter_mata_elang/pages/search_page.dart';
 import 'package:flutter_mata_elang/pages/bulks_page.dart';
+import 'package:flutter_mata_elang/pages/import_page.dart';
 import 'package:flutter_mata_elang/pages/billing_page.dart';
 import 'package:flutter_mata_elang/pages/service_page.dart';
+import 'package:flutter_mata_elang/pages/jumlahdata_page.dart';
 
 class MenuDrawer extends StatelessWidget {
 
@@ -50,21 +52,30 @@ class MenuDrawer extends StatelessWidget {
           },
         ),
         ListTile(
+          leading: Icon(Icons.folder_shared),
+          title: Text('Import CSV', style: Style.subTitle1.copyWith(color: Style.slategrey)),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => ImportPage()));
+          },
+        ),
+        ListTile(
           leading: Icon(Icons.cloud_download),
-          title: Text('Update Data', style: Style.subTitle1.copyWith(color: Style.slategrey)),
+          title: Text('Sinkron Data', style: Style.subTitle1.copyWith(color: Style.slategrey)),
           onTap: () {
             Navigator.pop(context);
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => DataPage()));
           },
         ),
         ListTile(
-          leading: Icon(Icons.event_note),
-          title: Text('Catatan', style: Style.subTitle1.copyWith(color: Style.slategrey)),
+          leading: Icon(Icons.cloud_download),
+          title: Text('Jumlah Data', style: Style.subTitle1.copyWith(color: Style.slategrey)),
           onTap: () {
             Navigator.pop(context);
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => NotePage()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => JumlahDataPage()));
           },
         ),
+        
         ListTile(
           leading: Icon(Icons.settings_applications),
           title: Text('Pengaturan', style: Style.subTitle1.copyWith(color: Style.slategrey)),

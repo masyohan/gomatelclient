@@ -38,8 +38,8 @@ class Register {
     _map['email'] = email;
     _map['password'] = password;
     _map['noktp'] = noktp;
-    _map['fotoktp'] = fotoktp;
-    _map['fotoselfi'] = fotoselfi;
+    //_map['fotoktp'] = fotoktp;
+    //_map['fotoselfi'] = fotoselfi;
     _map['nama'] = nama;
     _map['nohp'] = nohp;
     _map['alamat'] = alamat;

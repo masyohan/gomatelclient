@@ -157,8 +157,8 @@ class SpecialKeyboard extends StatefulWidget {
 class _SpecialKeyboardState extends State<SpecialKeyboard> {
   RegExp _numRex = RegExp('[0-9]');
   bool _turn = true;
-  List<List<String>> _keys = _keyslist.map((e) => e).toList();
-  List<int> _rows = _space.map((e) => e).toList();
+  List<List<String>> _keys = _rkeyslist.map((e) => e).toList();
+  List<int> _rows = _rspace.map((e) => e).toList();
 
   @override
   void initState() {
@@ -183,7 +183,7 @@ class _SpecialKeyboardState extends State<SpecialKeyboard> {
       _keys.length,
       (int i) {
         return Material(
-          color: Colors.transparent,
+          color: Colors.yellowAccent,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -207,13 +207,14 @@ class _SpecialKeyboardState extends State<SpecialKeyboard> {
                 } else {
                   _key = KeyboardKey(key: _keys[i][u], type: KeyType.text, action: KeyAction.type);
                   _numRex.hasMatch(_keys[i][u]) ?
-                  _child = Text(_keys[i][u].toUpperCase(), style: Style.key.copyWith(color: Style.darkindigo))
+                  _child = Text(_keys[i][u].toUpperCase(), style: Style.key.copyWith(color: Colors.black))
                   :
                   _child = Text(_keys[i][u].toUpperCase(), style: Style.key.copyWith(color: Style.white));
                 }
                 if(_keys[i][u] == 'KEY') {
                   return Expanded(
                     child: KeyButton(
+                      warna: Colors.black,
                       height: widget.height / _keyslist.length,
                       width: MediaQuery.of(context).size.width / _rows[i],
                       child: _child,
@@ -223,30 +224,40 @@ class _SpecialKeyboardState extends State<SpecialKeyboard> {
                 } else if(_keys[i][u] == 'SWC') {
                   return Expanded(
                     child: KeyButton(
+                      warna: Colors.black,
                       height: widget.height / _keyslist.length,
                       width: MediaQuery.of(context).size.width / _rows[i],
                       child: _child,
                       onPressed: (context) => setState(() {
                         _turn = !_turn;
                         if(_turn) {
-                          _keys = _keyslist.map((e) => e).toList();
-                          _rows = _space.map((e) => e).toList();
-
-                        } else {
                           _keys = _rkeyslist.map((e) => e).toList();
                           _rows = _rspace.map((e) => e).toList();
+
+                        } else {
+                          _keys = _keyslist.map((e) => e).toList();
+                          _rows = _space.map((e) => e).toList();
                         }
                       }),
                     ),
                   );
-                } else {
+                } else if(_numRex.hasMatch(_keys[i][u])){
                   return KeyButton(
+                    warna: Colors.white,
                     height: widget.height / _keys.length,
                     width: MediaQuery.of(context).size.width / _rows[i],
                     child: _child,
                     onPressed: (context) => widget.onPressed(_key),
                   );
 
+                }else {
+                  return KeyButton(
+                    warna: Colors.black,
+                    height: widget.height / _keys.length,
+                    width: MediaQuery.of(context).size.width / _rows[i],
+                    child: _child,
+                    onPressed: (context) => widget.onPressed(_key),
+                  );
                 }
               }
             )

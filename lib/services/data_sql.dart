@@ -45,7 +45,7 @@ class DataSql {
     Directory _directory = await getApplicationDocumentsDirectory();
     String _path = _directory.path + 'case.db';
 
-    Database _db = await openDatabase(_path, version: 1, onCreate:_createDB);
+    Database _db = await openDatabase(_path, version: 1, onCreate: _createDB);
     return _db;
   }
 
@@ -53,53 +53,152 @@ class DataSql {
     Directory _directory = await getApplicationDocumentsDirectory();
     String _path = _directory.path + 'bulk.db';
 
-    Database _db = await openDatabase(_path, version: 1, onCreate:_createBL);
+    Database _db = await openDatabase(_path, version: 1, onCreate: _createBL);
     return _db;
   }
 
   void _createDB(Database db, int newVersion) async {
-    await db.execute('CREATE TABLE $table($id INTEGER PRIMARY KEY AUTOINCREMENT, $name TEXT, '
-      '$plate TEXT, $vehicle TEXT, $frame TEXT, $engine TEXT, $ovd TEXT, $saldo TEXT, '
-      '$finance TEXT, $address TEXT, $number TEXT, $phone TEXT, $date TEXT, $note TEXT)');
+    await db.execute(
+        'CREATE TABLE $table($id INTEGER PRIMARY KEY AUTOINCREMENT, $name TEXT, '
+        '$plate TEXT, $vehicle TEXT, $frame TEXT, $engine TEXT, $ovd TEXT, $saldo TEXT, '
+        '$finance TEXT, $address TEXT, $number TEXT, $phone TEXT, $date TEXT, $note TEXT)');
   }
 
   void _createBL(Database db, int newVersion) async {
-    await db.execute('CREATE TABLE $bulk($id INTEGER PRIMARY KEY AUTOINCREMENT, $name TEXT, '
-      '$plate TEXT, $vehicle TEXT, $frame TEXT, $engine TEXT, $ovd TEXT, $saldo TEXT, '
-      '$finance TEXT, $address TEXT, $number TEXT, $phone TEXT, $date TEXT, $note TEXT)');
+    await db.execute(
+        'CREATE TABLE $bulk($id INTEGER PRIMARY KEY AUTOINCREMENT, $name TEXT, '
+        '$plate TEXT, $vehicle TEXT, $frame TEXT, $engine TEXT, $ovd TEXT, $saldo TEXT, '
+        '$finance TEXT, $address TEXT, $number TEXT, $phone TEXT, $date TEXT, $note TEXT)');
   }
 
-
+  
 
 
   Future<List<dynamic>> insertCases(List<Profile> profiles) async {
     Database _db = await database;
+    Database _dk = await databulk;
+    List<Future<bool>>_tugas = [];
+    Future<bool> syncFuture(satu,dua) async {
+      print('start'+satu.toString()+'to'+dua.toString());
+      await _db.transaction((txn) async {
+      final batchcoba = txn.batch();
+      for (int _i = satu; _i < dua; _i++) {
+        batchcoba.insert(table, profiles[_i].toMap());
 
+        //await txn.insert(table, profiles[_i].toMap());
+        //_batch.insert(table, profiles[_i].toMap());
+      }
+      batchcoba.commit();
+    });
+    }
+    List<Map> _resulk = await _dk.rawQuery('SELECT * FROM $bulk');
     await _db.execute('DELETE FROM $table');
-
     Batch _batch = _db.batch();
+    Batch _batch2 = _db.batch();
+    List<dynamic> _result;
 
+    int _totaldata = profiles.length;
+    int _databagi = 30000;
+    int _sisabagi = _totaldata % _databagi;
+    int _dibagi = (_totaldata / _databagi).toInt();
+    _dibagi = _sisabagi > 0 ? _dibagi + 1 : _dibagi;
+    print('data dibagi $_dibagi');
+    for (int _i = 0; _i < _dibagi; _i++) {
+      int _awal = _i * _databagi;
+      if (_i < _dibagi - 1) {
+        _tugas.add(syncFuture(_awal,_awal+_databagi));
+        
+      } else {
+        _tugas.add(syncFuture(_awal,_totaldata));
+      }
+    }
+    
+    Future.wait(_tugas);
+    /*
+    for (int _i = 0; _i < _dibagi; _i++) {
+      int _awal = _i * _databagi;
+      if (_i < _dibagi - 1) {
+
+      } else {
+
+      }
+    } */
+    /*
+    await _db.transaction((txn) async {
+      final batchcoba = txn.batch();
+      for (int _i = 0; _i < 50000; _i++) {
+        batchcoba.insert(table, profiles[_i].toMap());
+
+        //await txn.insert(table, profiles[_i].toMap());
+        //_batch.insert(table, profiles[_i].toMap());
+      }
+      batchcoba.commit();
+    });
+    
+    await _db.transaction((txn) async {
+      final batchcoba = txn.batch();
+      for (int _i = 50000; _i < 100000; _i++) {
+        batchcoba.insert(table, profiles[_i].toMap());
+
+        //await txn.insert(table, profiles[_i].toMap());
+        //_batch.insert(table, profiles[_i].toMap());
+      }
+      batchcoba.commit();
+    }); 
+    await _db.transaction((txn) async {
+      final batchcoba = txn.batch();
+      for (int _i = 100000; _i < 150000; _i++) {
+        batchcoba.insert(table, profiles[_i].toMap());
+
+        //await txn.insert(table, profiles[_i].toMap());
+        //_batch.insert(table, profiles[_i].toMap());
+      }
+      batchcoba.commit();
+    }); */
+    /*
     for(int _i = 0; _i < profiles.length; _i++) {
       _batch.insert(table, profiles[_i].toMap());
-    }
-
+    } 
     List<dynamic> _result = await _batch.commit();
+    //
+    */
+    for (int _i = 0; _i < _resulk.length; _i++) {
+      _batch2.insert(table, _resulk[_i]);
+    }
+    List<dynamic> _result2 = await _batch2.commit();
 
     return _result;
   }
 
   Future<int> updateCase(Profile profile) async {
     Database _db = await database;
-    int _result = await _db.update(table, profile.toMap(), where: '$id = ?', whereArgs: [profile.id]);
+    int _result = await _db.update(table, profile.toMap(),
+        where: '$id = ?', whereArgs: [profile.id]);
     print(_result);
+    return _result;
+  }
+
+  Future<int> deleteCase(Profile profile) async {
+    Database _db = await database;
+    int _result =
+        await _db.rawDelete('DELETE FROM $table WHERE id = ?', [profile.id]);
+    assert(_result == 1);
     return _result;
   }
 
   Future<Profile> selectCase(Profile profile) async {
     Database _db = await database;
 
-    List<dynamic> _result = await _db.query(table, where: '$id = ?', whereArgs: [profile.id]);
+    List<dynamic> _result =
+        await _db.query(table, where: '$id = ?', whereArgs: [profile.id]);
     return Profile.fromMap(_result.first);
+  }
+
+  Future<List<Map>> allbulk() async {
+    Database _db = await databulk;
+
+    List<Map> _result = await _db.rawQuery('SELECT * FROM $bulk');
+    return _result;
   }
 
   Future<List<dynamic>> searchCases(List<String> data) async {
@@ -108,53 +207,65 @@ class DataSql {
 
     String _que = plate;
     String _data = data[0];
-    if(data[1] == 'nopol') {
+    if (data[1] == 'nopol') {
       _que = plate;
-    } else if(data[1] == 'noka') {
+    } else if (data[1] == 'noka') {
       _que = frame;
-    } else if(data[1] == 'nosin') {
+    } else if (data[1] == 'nosin') {
       _que = engine;
     }
     print('$_que $_data');
-    List<dynamic> _result = await _db.query(table, where: '$_que LIKE ?', whereArgs: ['%$_data%'], orderBy: '${plate} ASC');
-    List<dynamic> _resulk = await _dk.query(bulk, where: '$_que LIKE ?', whereArgs: ['%$_data%'], orderBy: '${plate} ASC');
-    return []..addAll(_result)..addAll(_resulk);
+    List<dynamic> _result = await _db.rawQuery(
+        "SELECT * FROM $table t1 where $_que LIKE '%$_data%' order by $plate ASC LIMIT 50");
+    /*
+        and $number = (select max($number) from $table where t1.$plate =$table.plate)
+        where: '$_que LIKE ?',
+        whereArgs: ['%$_data%'],
+        groupBy: number,
+        orderBy: '${plate} ASC',
+        limit: 100); */
+    //List<dynamic> _resulk = await _dk.query(bulk, where: '$_que LIKE ?', whereArgs: ['%$_data%'], orderBy: '${plate} ASC');
+    return []..addAll(_result);
   }
 
   Future<List<dynamic>> searchNotes() async {
     Database _db = await database;
 
-    List<dynamic> _result = await _db.query(table, where: '$note != ?', whereArgs: ['']);
+    List<dynamic> _result =
+        await _db.query(table, where: '$note != ?', whereArgs: ['']);
     return _result;
   }
 
   Future<int> getCount() async {
     Database _db = await database;
 
-    List<Map<String, dynamic>> _x = await _db.rawQuery('SELECT COUNT(*) FROM $table');
+    List<Map<String, dynamic>> _x =
+        await _db.rawQuery('SELECT COUNT(*) FROM $table');
     int _result = Sqflite.firstIntValue(_x);
     return _result;
   }
 
-
-
   Future<List<dynamic>> insertBulks(List<Profile> profiles) async {
     Database _db = await databulk;
+    Database _datautama = await database;
 
     Batch _batch = _db.batch();
-
-    for(int _i = 0; _i < profiles.length; _i++) {
+    Batch _batch2 = _datautama.batch();
+    for (int _i = 0; _i < profiles.length; _i++) {
       _batch.insert(bulk, profiles[_i].toMap());
+      _batch2.insert(table, profiles[_i].toMap());
     }
 
     List<dynamic> _result = await _batch.commit();
+    List<dynamic> _result2 = await _batch2.commit();
 
     return _result;
   }
 
   Future<int> updateBulk(Profile profile) async {
     Database _db = await databulk;
-    int _result = await _db.update(bulk, profile.toMap(), where: '$id = ?', whereArgs: [profile.id]);
+    int _result = await _db.update(bulk, profile.toMap(),
+        where: '$id = ?', whereArgs: [profile.id]);
 
     return _result;
   }
@@ -162,15 +273,18 @@ class DataSql {
   Future<Profile> selectBulk(Profile profile) async {
     Database _db = await databulk;
 
-    List<dynamic> _result = await _db.query(bulk, where: '$id = ?', whereArgs: [profile.id]);
+    List<dynamic> _result =
+        await _db.query(bulk, where: '$id = ?', whereArgs: [profile.id]);
     return Profile.fromMap(_result.first);
   }
 
   Future<List<dynamic>> searchBulks(String data) async {
     Database _db = await databulk;
 
-    List<dynamic> _result = await _db.query(bulk, where: '$plate LIKE ?', whereArgs: ['%$data%'], orderBy: '${plate} ASC');
+    List<dynamic> _result = await _db.query(bulk,
+        where: '$plate LIKE ?',
+        whereArgs: ['%$data%'],
+        orderBy: '${plate} ASC');
     return _result;
   }
-
 }
